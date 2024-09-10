@@ -1,6 +1,6 @@
 ﻿namespace Tgs.GameInterface.SabaPlus.Core.Models;
 
 public record ProviderInfo(
-	Uri ApiUrl,
+	string ApiUrl,
 	string OperatorPassword,
 	string OperatorSignKey);
