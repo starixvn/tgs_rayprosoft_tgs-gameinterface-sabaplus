@@ -5,4 +5,10 @@ include:
 
 variables:
   PUBLISH_NUGET: "true"
-  PROJECT_FOLDER: Tgs.GameInterface.SabaPlus.Client
+
+publish_nuget:
+  parallel:
+    matrix:
+      - PROJECT_FOLDER:
+          - Tgs.GameInterface.SabaPlus.Client
+          - Tgs.GameInterface.SabaPlus.Domains
