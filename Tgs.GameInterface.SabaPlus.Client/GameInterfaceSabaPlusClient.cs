@@ -11,11 +11,7 @@ internal class GameInterfaceSabaPlusClient(HttpClient client) : IGameInterfaceSa
 
 	private static readonly JsonSerializerOptions? _SerializerOptions = new()
 	{
-		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-		Converters =
-		{
-			new JsonStringEnumConverter()
-		}
+		PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 	};
 
 	public async ValueTask<string> GameUrlAsync(
