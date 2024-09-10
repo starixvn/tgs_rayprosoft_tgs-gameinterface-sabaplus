@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
+using Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
 using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.SabaPlus.Controllers;
@@ -9,10 +9,8 @@ namespace Tgs.GameInterface.SabaPlus.Controllers;
 public class SabaPlusController : ControllerBase
 {
 	[HttpPost("game/url", Name = "GameUrl")]
-	public ValueTask<string> GameUrlAsync(
-		[FromServices] IGetService<GameUrlQuery, string> service,
+	public ValueTask<GetGameUrlResult> GameUrlAsync(
+		[FromServices] IGetService<GameUrlQuery, GetGameUrlResult> service,
 		GameUrlQuery source)
-		=> service.GetAsync(
-			query: source,
-			cancellationToken: HttpContext.RequestAborted);
+		=> service.GetAsync(query: source, cancellationToken: HttpContext.RequestAborted);
 }

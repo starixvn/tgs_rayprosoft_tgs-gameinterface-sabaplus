@@ -1,6 +1,6 @@
-﻿using Tgs.GameInterface.SabaPlus.Core.Models;
+﻿using Tgs.GameInterface.SabaPlus.Domains.Models;
 
-namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
+namespace Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
 
 public record GameUrlQuery(
 	ProviderInfo ProviderInfo,

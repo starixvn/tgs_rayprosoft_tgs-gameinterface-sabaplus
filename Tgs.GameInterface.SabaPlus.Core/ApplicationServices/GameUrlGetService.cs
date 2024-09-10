@@ -1,10 +1,11 @@
-﻿using Tgs.ServiceUtility;
+﻿using Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
+using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
 
-internal class GameUrlGetService : IGetService<GameUrlQuery, string>
+internal class GameUrlGetService : IGetService<GameUrlQuery, GetGameUrlResult>
 {
-	public async ValueTask<string> GetAsync(GameUrlQuery query, CancellationToken cancellationToken = default)
+	public async ValueTask<GetGameUrlResult> GetAsync(GameUrlQuery query, CancellationToken cancellationToken = default)
 	{
 		//var result = await client
 		//	.GetSabaUrlAsync(
@@ -14,6 +15,6 @@ internal class GameUrlGetService : IGetService<GameUrlQuery, string>
 		//		cancellationToken: cancellationToken)
 		//	.ConfigureAwait(false);
 
-		return "https://google.com";
+		return new GetGameUrlResult(new Uri("https://google.com"));
 	}
 }

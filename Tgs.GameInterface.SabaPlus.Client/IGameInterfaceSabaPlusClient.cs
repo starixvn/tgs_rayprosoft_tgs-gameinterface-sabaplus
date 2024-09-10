@@ -1,10 +1,11 @@
-﻿using Tgs.GameInterface.SabaPlus.Client.Models;
+﻿using Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
+using Tgs.GameInterface.SabaPlus.Domains.Models;
 
 namespace Tgs.GameInterface.SabaPlus.Client;
 
 public interface IGameInterfaceSabaPlusClient
 {
-	ValueTask<string> GameUrlAsync(
+	ValueTask<GetGameUrlResult?> GameUrlAsync(
 		ProviderInfo provider,
 		ProductInfo product,
 		CustInfo custInfo,

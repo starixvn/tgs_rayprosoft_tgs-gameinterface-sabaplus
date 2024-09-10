@@ -1,4 +1,4 @@
-﻿namespace Tgs.GameInterface.SabaPlus.Core.Models;
+﻿namespace Tgs.GameInterface.SabaPlus.Domains.Models;
 
 public record AgentInfo(
 	string? AgentId,
