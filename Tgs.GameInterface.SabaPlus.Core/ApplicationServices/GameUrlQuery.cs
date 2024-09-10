@@ -1,17 +1,11 @@
-﻿namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
+﻿using Tgs.GameInterface.SabaPlus.Core.Models;
+
+namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
 
 public record GameUrlQuery(
-	Uri ApiUrl,
-	string OperatorPassword,
-	string OperatorSignKey,
-
-	string GameType,
-	string GameId,
-
-	string PlayerCode,
-	string PlayerName,
-	string Language,
-	string Platform,
-	string Currency,
-	string IP,
-	string WalletSideToken);
+	ProviderInfo ProviderInfo,
+	ProductInfo ProductInfo,
+	CustInfo CustInfo,
+	AgentInfo AgentInfo,
+	string? HomeUrl = null,
+	string? Additional = null);

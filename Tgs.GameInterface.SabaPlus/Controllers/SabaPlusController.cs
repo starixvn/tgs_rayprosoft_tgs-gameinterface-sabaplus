@@ -4,7 +4,7 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.SabaPlus.Controllers;
 
-[Route("saba")]
+[Route("sabaplus")]
 [ApiController]
 public class SabaPlusController : ControllerBase
 {
