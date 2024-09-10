@@ -2,14 +2,14 @@
 
 namespace Tgs.GameInterface.SabaPlus.Client;
 
-internal class GameInterfaceSabaClient() : IGameInterfaceSabaClient
+public interface IGameInterfaceSabaPlusClient
 {
-	public ValueTask<string> GameUrlAsync(
+	ValueTask<string> GameUrlAsync(
 		ProviderInfo provider,
 		ProductInfo product,
 		CustInfo custInfo,
 		AgentInfo agent,
 		string? homeUrl = "",
 		object? additional = null,
-		CancellationToken cancellationToken = default) => throw new NotImplementedException();
+		CancellationToken cancellationToken = default);
 }
