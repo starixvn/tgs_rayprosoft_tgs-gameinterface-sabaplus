@@ -8,4 +8,4 @@ public record GameUrlQuery(
 	CustInfo CustInfo,
 	AgentInfo AgentInfo,
 	string? HomeUrl = null,
-	string? Additional = null);
+	object? Additional = null);
