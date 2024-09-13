@@ -6,6 +6,6 @@ public record CustInfo(
 	string Language,
 	string Platform,
 	string CurrencyISO,
-	string BrowserUserAgent,
+	string? BrowserUserAgent,
 	string IpAddress,
 	string WalletSideToken);
