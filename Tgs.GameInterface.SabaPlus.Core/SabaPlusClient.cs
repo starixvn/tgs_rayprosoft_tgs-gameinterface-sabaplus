@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Tgs.GameInterface.SabaPlus.Core.Models;
-using Tgs.GameInterface.SabaPlus.Domains.Models;
+using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
 
 namespace Tgs.GameInterface.SabaPlus.Core;
 
@@ -11,18 +11,18 @@ internal class SabaPlusClient(HttpClient client) : ISabaPlusClient
 {
 	public async ValueTask<SabaPlusResponse<TResponse>> PostAsync<TResponse>(
 		string path,
-		ProviderInfo provider,
+		ProviderConfiguration configuration,
 		JsonContent content,
 		CancellationToken cancellationToken = default)
 	{
-		client.BaseAddress = provider.ApiUrl;
+		client.BaseAddress = configuration.ApiUrl;
 
 		var raw = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-		var hashed = MD5.HashData(Encoding.UTF8.GetBytes($"{raw}{provider.OperatorSignKey}"));
+		var hashed = MD5.HashData(Encoding.UTF8.GetBytes($"{raw}{configuration.OperatorSignKey}"));
 		var signed = Convert.ToHexString(hashed);
 
 		content.Headers.Add("operator-sign", signed);
-		content.Headers.Add("operator-pwd", provider.OperatorPassword);
+		content.Headers.Add("operator-pwd", configuration.OperatorPassword);
 
 		var response = await client.PostAsync(path, content, cancellationToken).ConfigureAwait(false);
 
