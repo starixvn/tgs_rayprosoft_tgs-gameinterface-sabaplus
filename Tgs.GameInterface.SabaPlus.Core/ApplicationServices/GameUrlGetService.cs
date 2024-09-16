@@ -25,7 +25,7 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 				{
 					query.Configuration.GameType,
 					GameId = query.Game.GameExternalId,
-					AppType = GetAppType(query.Game.PlatformType)
+					//AppType = GetAppType(query.Game.PlatformType) TODO: Need discuss more
 				},
 				CustInfo = new
 				{
@@ -63,14 +63,14 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 		sentryClient.CaptureMessage(string.Join("/r/n", "GetGameUrl Details:", request, response));
 	}
 
-	private static string GetAppType(GamePlatformType type)
-		=> type switch
-		{
-			GamePlatformType.Desktop => "D",
-			GamePlatformType.Mobile => "M",
-			GamePlatformType.DesktopAndMobile => "M",
-			_ => "M",
-		};
+	//private static string GetAppType(GamePlatformType type)
+	//	=> type switch
+	//	{
+	//		GamePlatformType.Desktop => "D",
+	//		GamePlatformType.Mobile => "M",
+	//		GamePlatformType.DesktopAndMobile => "M",
+	//		_ => "M",
+	//	};
 
 	private static string GetUserPlatform(PlatformType type)
 		=> type switch
