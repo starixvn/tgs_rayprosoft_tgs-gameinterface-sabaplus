@@ -1,11 +1,13 @@
 ﻿using System.Net.Http.Json;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
 using Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
 using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
 
-internal class GameUrlGetService(ISabaPlusClient client) : IGetService<GameUrlQuery, GetGameUrlResult>
+internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryClient) : IGetService<GameUrlQuery, GetGameUrlResult>
 {
 	private static readonly string _Path = "/api/CommonWallet/LaunchGame";
 
@@ -51,7 +53,14 @@ internal class GameUrlGetService(ISabaPlusClient client) : IGetService<GameUrlQu
 		var content = JsonContent.Create(request);
 		var response = await client.PostAsync<GameUrlPayload>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
 
+		this.WriteLog(JsonConvert.SerializeObject(request), JsonConvert.SerializeObject(response));
+
 		return new GetGameUrlResult(response.Payload.ReturnUrl);
+	}
+
+	private void WriteLog(string request, string response)
+	{
+		sentryClient.CaptureMessage(string.Join("/r/n", "GetGameUrl Details:", request, response));
 	}
 
 	private static string GetAppType(GamePlatformType type)

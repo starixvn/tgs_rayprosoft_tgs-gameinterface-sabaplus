@@ -9,6 +9,8 @@ var filterInstrumentations = new[] { "html", "ico", "png", "jpg" };
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseSentry();
+
 builder.Logging
 	.AddOpenTelemetry(options =>
 	{
@@ -79,19 +81,22 @@ builder.Services
 
 builder.Services.AddHealthChecks();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 _ = app.UseSwagger();
 _ = app.UseSwaggerUI();
 
-_ = app.UseHttpsRedirection();
+//_ = app.UseHttpsRedirection();
 
 _ = app.UseAuthorization();
 
 _ = app.MapControllers();
 
 app.MapHealthChecks("/health");
+
+SentrySdk.CaptureMessage($"Started SABA Plus Game Interface at {DateTime.Now}");
 
 // Configure the HTTP request pipeline.
 app.Run();
