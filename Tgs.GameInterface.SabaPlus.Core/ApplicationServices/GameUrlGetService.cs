@@ -56,7 +56,7 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 		var content = JsonContent.Create(request);
 		var response = await client.PostAsync<GameUrlPayload>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
 
-		await WriteLogAsync(request, response, cancellationToken).ConfigureAwait(false);
+		await WriteLogAsync(new { Request = request, Query = query }, response, cancellationToken).ConfigureAwait(false);
 
 		return new GetGameUrlResult(response.Payload.ReturnUrl);
 	}
