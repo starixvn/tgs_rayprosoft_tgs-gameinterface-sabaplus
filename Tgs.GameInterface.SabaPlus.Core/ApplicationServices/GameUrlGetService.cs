@@ -1,13 +1,16 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using Newtonsoft.Json;
+using Tgs.GameInterface.SabaPlus.Core.Models;
+using Tgs.GameInterface.SabaPlus.Core.Repositories;
 using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
 using Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
 using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
 
-internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryClient) : IGetService<GameUrlQuery, GetGameUrlResult>
+internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryClient, IApiLogRepository apiLog) : IGetService<GameUrlQuery, GetGameUrlResult>
 {
 	private static readonly string _Path = "/api/CommonWallet/LaunchGame";
 
@@ -53,14 +56,24 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 		var content = JsonContent.Create(request);
 		var response = await client.PostAsync<GameUrlPayload>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
 
-		this.WriteLog(JsonConvert.SerializeObject(request), JsonConvert.SerializeObject(response));
+		_ = WriteLog(request, response, cancellationToken);
 
 		return new GetGameUrlResult(response.Payload.ReturnUrl);
 	}
 
-	private void WriteLog(string request, string response)
+	private static string GetUserPlatform(PlatformType type)
+		=> type switch
+		{
+			PlatformType.Desktop => "D",
+			PlatformType.Mobile => "M",
+			_ => "M",
+		};
+
+	private async Task WriteLog(object request, object response, CancellationToken cancellationToken)
 	{
-		sentryClient.CaptureMessage(string.Join("/r/n", "GetGameUrl Details:", request, response));
+		await apiLog.AddAsync(new APILogMessage("GetGameUrl", request, response), cancellationToken).ConfigureAwait(true);
+
+		sentryClient.CaptureMessage(string.Join("/r/n", "GetGameUrl Details:", JsonConvert.SerializeObject(request), JsonConvert.SerializeObject(response)));
 	}
 
 	//private static string GetAppType(GamePlatformType type)
@@ -71,12 +84,4 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 	//		GamePlatformType.DesktopAndMobile => "M",
 	//		_ => "M",
 	//	};
-
-	private static string GetUserPlatform(PlatformType type)
-		=> type switch
-		{
-			PlatformType.Desktop => "D",
-			PlatformType.Mobile => "M",
-			_ => "M",
-		};
 }
