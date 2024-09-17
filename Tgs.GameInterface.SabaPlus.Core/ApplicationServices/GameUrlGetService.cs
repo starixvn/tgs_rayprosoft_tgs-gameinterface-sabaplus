@@ -56,7 +56,7 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 		var content = JsonContent.Create(request);
 		var response = await client.PostAsync<GameUrlPayload>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
 
-		_ = WriteLog(request, response, cancellationToken);
+		await WriteLogAsync(request, response, cancellationToken).ConfigureAwait(false);
 
 		return new GetGameUrlResult(response.Payload.ReturnUrl);
 	}
@@ -69,7 +69,7 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 			_ => "M",
 		};
 
-	private async Task WriteLog(object request, object response, CancellationToken cancellationToken)
+	private async Task WriteLogAsync(object request, object response, CancellationToken cancellationToken)
 	{
 		await apiLog.AddAsync(new APILogMessage("GetGameUrl", request, response), cancellationToken).ConfigureAwait(true);
 
