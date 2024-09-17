@@ -1,7 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
-using Newtonsoft.Json;
 using Tgs.GameInterface.SabaPlus.Core.Models;
 using Tgs.GameInterface.SabaPlus.Core.Repositories;
 using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
@@ -10,13 +7,14 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
 
-internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryClient, IApiLogRepository apiLog) : IGetService<GameUrlQuery, GetGameUrlResult>
+internal class GameUrlGetService(ISabaPlusClient client, IApiLogRepository apiLog, Settings settings) : IGetService<GameUrlQuery, GetGameUrlResult>
 {
 	private static readonly string _Path = "/api/CommonWallet/LaunchGame";
 
 	public async ValueTask<GetGameUrlResult> GetAsync(GameUrlQuery query, CancellationToken cancellationToken = default)
 	{
 		var walletToken = $"{query.Game.GameProviderCode}@{query.Game.GameId}@{Guid.NewGuid()}";
+		var playerCode = settings.IsProduction ? query.Player.PlayerCode : $"{query.Player.PlayerCode}_test";
 
 		var request = new
 		{
@@ -34,7 +32,7 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 				{
 					query.Query.Language,
 					query.Query.ExtraInfo.BrowserUserAgent,
-					OperatorCustomerId = query.Player.PlayerCode,
+					OperatorCustomerId = playerCode,
 					OperatorCustomerName = query.Player.Username,
 					Platform = GetUserPlatform(query.Query.PlatformType),
 					CurrencyISO = query.Currency,
@@ -72,8 +70,6 @@ internal class GameUrlGetService(ISabaPlusClient client, ISentryClient sentryCli
 	private async Task WriteLogAsync(object request, object response, CancellationToken cancellationToken)
 	{
 		await apiLog.AddAsync(new APILogMessage("GetGameUrl", request, response), cancellationToken).ConfigureAwait(true);
-
-		sentryClient.CaptureMessage(string.Join("/r/n", "GetGameUrl Details:", JsonConvert.SerializeObject(request), JsonConvert.SerializeObject(response)));
 	}
 
 	//private static string GetAppType(GamePlatformType type)
