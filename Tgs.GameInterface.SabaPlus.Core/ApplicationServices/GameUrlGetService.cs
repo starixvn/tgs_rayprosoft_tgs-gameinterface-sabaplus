@@ -39,7 +39,7 @@ internal class GameUrlGetService(ISabaPlusClient client, IApiLogRepository apiLo
 					IpAddress = query.Query.IPAddress,
 					WalletSideToken = walletToken
 				},
-				AgentInfo = new
+				AgentInfo = string.IsNullOrEmpty(query.Configuration.AgentId) ? null : new
 				{
 					query.Configuration.AgentId,
 					query.Configuration.AgentKey,
