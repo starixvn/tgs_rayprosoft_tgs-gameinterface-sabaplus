@@ -36,13 +36,13 @@ internal class BetResultCheckService(ISabaPlusClient client, IApiLogRepository a
 	}
 
 	private static object? BuildAgentInfo(BetResultCheckQuery query)
-		=> query.Configuration.AgentId is not null ? new
+		=> string.IsNullOrEmpty(query.Configuration.AgentId) ? null : new
 		{
 			query.Configuration.AgentId,
 			query.Configuration.AgentKey,
 			query.Configuration.AgentCode,
 			ExtraInfo = query.Configuration.AgentExtraInfo
-		} : null;
+		};
 
 	private async Task WriteLogAsync(object request, object response, CancellationToken cancellationToken)
 	{
