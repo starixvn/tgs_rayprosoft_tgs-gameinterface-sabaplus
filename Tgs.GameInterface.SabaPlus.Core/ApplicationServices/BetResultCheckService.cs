@@ -30,7 +30,7 @@ internal class BetResultCheckService(ISabaPlusClient client, IApiLogger logger, 
 		var content = JsonContent.Create(request);
 		var response = await client.PostAsync<BetResultCheckResult>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
 
-		WriteLog("BetResultCheck", new { Request = request, Query = query }, response);
+		await WriteLogAsync("BetResultCheck", new { Request = request, Query = query }, response).ConfigureAwait(false);
 
 		return response.Payload;
 	}

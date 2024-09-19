@@ -4,5 +4,5 @@ namespace Tgs.GameInterface.SabaPlus.Core.IntegrationServices;
 
 public interface IApiLogger
 {
-	void Log(APILogMessage message);
+	ValueTask LogAsync(APILogMessage message);
 }

@@ -15,6 +15,6 @@ internal class Service(IApiLogger logger)
 			ExtraInfo = configuration.AgentExtraInfo
 		};
 
-	protected void WriteLog(string action, object request, object response)
-		=> logger.Log(new APILogMessage(action, request, response));
+	protected ValueTask WriteLogAsync(string action, object request, object response)
+		=> logger.LogAsync(new APILogMessage(action, request, response));
 }

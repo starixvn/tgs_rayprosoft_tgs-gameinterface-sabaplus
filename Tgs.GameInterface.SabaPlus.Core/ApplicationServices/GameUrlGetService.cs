@@ -48,7 +48,7 @@ internal class GameUrlGetService(ISabaPlusClient client, IApiLogger logger, Sett
 		var content = JsonContent.Create(request);
 		var response = await client.PostAsync<GetGameUrlResult>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
 
-		WriteLog("GetGameUrl", new { Request = request, Query = query }, response);
+		await WriteLogAsync("GetGameUrl", new { Request = request, Query = query }, response).ConfigureAwait(false);
 
 		return response.Payload;
 	}
