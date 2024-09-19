@@ -16,6 +16,7 @@ RUN dotnet publish "./Tgs.GameInterface.SabaPlus.csproj" -c $BUILD_CONFIGURATION
 
 FROM hub.lumigame.com/base/dotnet/core/aspnet:8.0-alpine-24h1.1 AS base
 USER app
+WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Tgs.GameInterface.SabaPlus.dll"]
 EXPOSE 5000
