@@ -1,37 +1,35 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Tgs.GameInterface.SabaPlus.Core;
-using Tgs.GameInterface.SabaPlus.Core.Repositories;
+using Tgs.GameInterface.SabaPlus.Core.IntegrationServices;
+using Tgs.GameInterface.SabaPlus.Core.Models;
+using NATS.Client.Core;
+using Tgs.MessageQueue.Nats.Serializers;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-	public static IServiceCollection AddGameInterfaceCore(
-		this IServiceCollection services)
-		=> services
-			.AddOptions<Settings>()
-			.Configure((Settings settings, IServiceProvider service) =>
-			{
-				var configuration = service.GetRequiredService<IConfiguration>();
+	private static readonly string _NatsKey = "Nats";
 
-				settings.Env = configuration.GetValue<string>("Env")!;
-			})
-			.Services
-			.AddSingleton(sp => sp.GetRequiredService<IOptions<Settings>>().Value)
+	public static IServiceCollection AddNats(this IServiceCollection services, Settings settings)
+		=> services.AddKeyedSingleton(_NatsKey, (sp, _) => new NatsConnection(NatsOpts.Default with
+		{
+			Url = sp.GetRequiredService<IConfiguration>().GetConnectionString(_NatsKey)!,
+			SerializerRegistry = TgsNatsSerializerRegistration.Default,
+		}))
+		.AddMessageQueue()
+		.AddNatsMessageQueue(config => config.ConfigureResolveConnection(sp => sp.GetRequiredKeyedService<NatsConnection>(_NatsKey)))
+		.ClearAllExchanges()
+		.AddNatsGlobPatternExchange(settings.LogChannel)
+		.Services;
+
+	public static IServiceCollection AddGameInterfaceCore(
+		this IServiceCollection services, Settings settings)
+		=> services
+			.AddSingleton(settings)
 			.RegisterAllServiceUtilityTypes(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient)
 			.AddHttpClient<ISabaPlusClient, SabaPlusClient>()
 			.Services
-			.AddOptions<MongoOptions>()
-			.Configure((MongoOptions options, IServiceProvider service) =>
-			{
-				var configuration = service.GetRequiredService<IConfiguration>();
-
-				options.ConnectionString = configuration.GetConnectionString("Mongo")!;
-			})
-			.Services
-			.AddSingleton<MongoConnection>()
-			.AddScoped<IApiLogRepository, ApiLogRepository>()
-			.AddScoped(sp => sp.GetRequiredService<MongoConnection>().Client);
+			.AddNats(settings)
+			.AddScoped<IApiLogger, ApiLogger>();
 }

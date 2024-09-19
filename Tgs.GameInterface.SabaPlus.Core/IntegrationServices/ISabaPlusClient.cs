@@ -2,7 +2,7 @@
 using Tgs.GameInterface.SabaPlus.Core.Models;
 using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
 
-namespace Tgs.GameInterface.SabaPlus.Core;
+namespace Tgs.GameInterface.SabaPlus.Core.IntegrationServices;
 
 public interface ISabaPlusClient
 {

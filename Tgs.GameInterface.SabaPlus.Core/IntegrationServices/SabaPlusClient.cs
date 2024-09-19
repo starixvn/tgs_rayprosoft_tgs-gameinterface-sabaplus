@@ -5,7 +5,7 @@ using System.Text.Json;
 using Tgs.GameInterface.SabaPlus.Core.Models;
 using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
 
-namespace Tgs.GameInterface.SabaPlus.Core;
+namespace Tgs.GameInterface.SabaPlus.Core.IntegrationServices;
 
 internal class SabaPlusClient(HttpClient client) : ISabaPlusClient
 {
@@ -30,6 +30,6 @@ internal class SabaPlusClient(HttpClient client) : ISabaPlusClient
 
 		var data = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
-		return JsonSerializer.Deserialize<SabaPlusResponse<TResponse>>(data);
+		return JsonSerializer.Deserialize<SabaPlusResponse<TResponse>>(data)!;
 	}
 }

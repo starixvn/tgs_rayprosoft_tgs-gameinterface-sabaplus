@@ -1,13 +1,13 @@
 ﻿using System.Net.Http.Json;
 using Tgs.GameInterface.SabaPlus.Core.Models;
-using Tgs.GameInterface.SabaPlus.Core.Repositories;
+using Tgs.GameInterface.SabaPlus.Core.IntegrationServices;
 using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
 using Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
 using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
 
-internal class GameUrlGetService(ISabaPlusClient client, IApiLogRepository apiLog, Settings settings) : IGetService<GameUrlQuery, GetGameUrlResult>
+internal class GameUrlGetService(ISabaPlusClient client, IApiLogger logger, Settings settings) : Service(logger), IGetService<GameUrlQuery, GetGameUrlResult>
 {
 	private static readonly string _Path = "/api/CommonWallet/LaunchGame";
 
@@ -39,24 +39,18 @@ internal class GameUrlGetService(ISabaPlusClient client, IApiLogRepository apiLo
 					IpAddress = query.Query.IPAddress,
 					WalletSideToken = walletToken
 				},
-				AgentInfo = string.IsNullOrEmpty(query.Configuration.AgentId) ? null : new
-				{
-					query.Configuration.AgentId,
-					query.Configuration.AgentKey,
-					query.Configuration.AgentCode,
-					ExtraInfo = query.Configuration.AgentExtraInfo
-				},
+				AgentInfo = BuildAgentInfo(query.Configuration),
 				HomeUrl = query.Query.BackUrl.ToString(),
 				query.Configuration.Additional
 			}
 		};
 
 		var content = JsonContent.Create(request);
-		var response = await client.PostAsync<GameUrlPayload>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
+		var response = await client.PostAsync<GetGameUrlResult>(_Path, query.Configuration, content, cancellationToken).ConfigureAwait(false);
 
-		await WriteLogAsync(new { Request = request, Query = query }, response, cancellationToken).ConfigureAwait(false);
+		WriteLog("GetGameUrl", new { Request = request, Query = query }, response);
 
-		return new GetGameUrlResult(response.Payload.ReturnUrl);
+		return response.Payload;
 	}
 
 	private static string GetUserPlatform(PlatformType type)
@@ -66,11 +60,6 @@ internal class GameUrlGetService(ISabaPlusClient client, IApiLogRepository apiLo
 			PlatformType.Mobile => "M",
 			_ => "M",
 		};
-
-	private async Task WriteLogAsync(object request, object response, CancellationToken cancellationToken)
-	{
-		await apiLog.AddAsync(new APILogMessage("GetGameUrl", request, response), cancellationToken).ConfigureAwait(true);
-	}
 
 	//private static string GetAppType(GamePlatformType type)
 	//	=> type switch

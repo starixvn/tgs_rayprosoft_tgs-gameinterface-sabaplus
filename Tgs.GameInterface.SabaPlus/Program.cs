@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Tgs.GameInterface.SabaPlus.Core.Models;
 
 var filterInstrumentations = new[] { "html", "ico", "png", "jpg" };
 
 var builder = WebApplication.CreateBuilder(args);
+var settings = builder.Configuration.Get<Settings>();
 
 builder.WebHost.UseSentry();
 
@@ -47,7 +49,7 @@ builder.Services.AddSwaggerGen(c =>
 	}
 });
 
-builder.Services.AddGameInterfaceCore();
+builder.Services.AddGameInterfaceCore(settings);
 
 builder.Services
 	.AddOpenTelemetry()
