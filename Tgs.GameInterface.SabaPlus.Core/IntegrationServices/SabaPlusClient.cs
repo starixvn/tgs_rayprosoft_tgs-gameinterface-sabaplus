@@ -15,21 +15,36 @@ internal class SabaPlusClient(HttpClient client) : ISabaPlusClient
 		JsonContent content,
 		CancellationToken cancellationToken = default)
 	{
-		client.BaseAddress = configuration.ApiUrl;
+		try
+		{
+			client.BaseAddress = configuration.ApiUrl;
 
-		var raw = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-		var hashed = MD5.HashData(Encoding.UTF8.GetBytes($"{raw}{configuration.OperatorSignKey}"));
-		var signed = Convert.ToHexString(hashed);
+			var raw = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+			var hashed = MD5.HashData(Encoding.UTF8.GetBytes($"{raw}{configuration.OperatorSignKey}"));
+			var signed = Convert.ToHexString(hashed);
 
-		content.Headers.Add("operator-sign", signed);
-		content.Headers.Add("operator-pwd", configuration.OperatorPassword);
+			content.Headers.Add("operator-sign", signed);
+			content.Headers.Add("operator-pwd", configuration.OperatorPassword);
 
-		var response = await client.PostAsync(path, content, cancellationToken).ConfigureAwait(false);
+			var response = await client.PostAsync(path, content, cancellationToken).ConfigureAwait(false);
 
-		response.EnsureSuccessStatusCode();
+			response.EnsureSuccessStatusCode();
 
-		var data = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+			var dataInString = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+			var data = JsonSerializer.Deserialize<SabaPlusResponse<TResponse>>(dataInString)!;
 
-		return JsonSerializer.Deserialize<SabaPlusResponse<TResponse>>(data)!;
+			if (data.ErrorCode != 0)
+			{
+				SentrySdk.CaptureMessage(dataInString);
+			}
+
+			return data;
+		}
+		catch (Exception ex)
+		{
+			SentrySdk.CaptureException(ex);
+
+			return new SabaPlusResponse<TResponse>();
+		}
 	}
 }
