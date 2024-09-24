@@ -7,7 +7,7 @@ namespace Tgs.GameInterface.SabaPlus.Core.ApplicationServices;
 internal class Service(IApiLogger logger)
 {
 	protected static object? BuildAgentInfo(ProviderConfiguration configuration)
-		=> string.IsNullOrEmpty(configuration.AgentId) ? null : new
+		=> string.IsNullOrEmpty(configuration.AgentKey) ? null : new
 		{
 			configuration.AgentId,
 			configuration.AgentKey,
