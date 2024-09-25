@@ -23,7 +23,7 @@ internal class GameInterfaceSabaPlusClient(HttpClient client) : IGameInterfaceSa
 	public ValueTask<BetResultCheckResult?> BetResultCheck(BetResultCheckQuery query, CancellationToken cancellationToken = default)
 		=> PostAync<BetResultCheckQuery, BetResultCheckResult>(_BetResultCheck, query, cancellationToken);
 
-	public ValueTask<GetBetHistoryUrlResult?> BetHistoryUrl(BetHistoryUrlQuery query, CancellationToken cancellationToken = default)
+	public ValueTask<GetBetHistoryUrlResult?> BetHistoryUrlAsync(BetHistoryUrlQuery query, CancellationToken cancellationToken = default)
 		=> PostAync<BetHistoryUrlQuery, GetBetHistoryUrlResult>(_BetHistoryUrl, query, cancellationToken);
 
 	private async ValueTask<TResult?> PostAync<TQuery, TResult>(string action, TQuery query, CancellationToken cancellationToken)

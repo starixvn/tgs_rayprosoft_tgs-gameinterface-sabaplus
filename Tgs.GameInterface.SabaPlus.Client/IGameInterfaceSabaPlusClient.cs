@@ -10,5 +10,5 @@ public interface IGameInterfaceSabaPlusClient
 
 	ValueTask<BetResultCheckResult?> BetResultCheck(BetResultCheckQuery query, CancellationToken cancellationToken = default);
 
-	ValueTask<GetBetHistoryUrlResult?> BetHistoryUrl(BetHistoryUrlQuery query, CancellationToken cancellationToken = default);
+	ValueTask<GetBetHistoryUrlResult?> BetHistoryUrlAsync(BetHistoryUrlQuery query, CancellationToken cancellationToken = default);
 }
