@@ -36,6 +36,6 @@ internal class GameBetHistoryUrlService(ISabaPlusClient client, IApiLogger logge
 
 		await WriteLogAsync("GetBetHistoryUrl", new { Request = request, Query = query }, response).ConfigureAwait(false);
 
-		return response.Payload ?? new GetBetHistoryUrlResult(new Uri(""));
+		return response.Payload;
 	}
 }
