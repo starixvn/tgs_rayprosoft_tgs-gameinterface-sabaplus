@@ -35,6 +35,6 @@ internal class GameInterfaceSabaPlusClient(HttpClient client) : IGameInterfaceSa
 
 		var data = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
-		return JsonSerializer.Deserialize<TResult>(data, _SerializerOptions);
+		return JsonSerializer.Deserialize<TResult>(string.IsNullOrEmpty(data) ? "{}" : data, _SerializerOptions);
 	}
 }
