@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tgs.GameInterface.SabaPlus.Domains.BetResultCheck;
 using Tgs.GameInterface.SabaPlus.Domains.GetBetHistoryUrl;
+using Tgs.GameInterface.SabaPlus.Domains.GetDailyTicketSummary;
 using Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
 using Tgs.ServiceUtility;
 
@@ -26,5 +27,11 @@ public class SabaPlusController : ControllerBase
 	public ValueTask<GetBetHistoryUrlResult> BetHistoryUrl(
 	[FromServices] IGetService<BetHistoryUrlQuery, GetBetHistoryUrlResult> service,
 	BetHistoryUrlQuery source)
+	=> service.GetAsync(query: source, cancellationToken: HttpContext.RequestAborted);
+
+	[HttpPost("getdailyticketsummary", Name = "GetDailyTicketSummary")]
+	public ValueTask<GetDailyTicketSummaryResult> GetDailyTicketSummary(
+	[FromServices] IGetService<DailyTicketSummaryQuery, GetDailyTicketSummaryResult> service,
+	DailyTicketSummaryQuery source)
 	=> service.GetAsync(query: source, cancellationToken: HttpContext.RequestAborted);
 }
