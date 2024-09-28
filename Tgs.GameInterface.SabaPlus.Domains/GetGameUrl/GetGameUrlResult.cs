@@ -1,3 +1,3 @@
 ﻿namespace Tgs.GameInterface.SabaPlus.Domains.GetGameUrl;
 
-public record GetGameUrlResult(Uri ReturnUrl, string Token);
+public record GetGameUrlResult(Uri ReturnUrl, string? Token = default);

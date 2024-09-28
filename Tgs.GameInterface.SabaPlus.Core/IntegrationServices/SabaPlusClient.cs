@@ -35,7 +35,7 @@ internal class SabaPlusClient(HttpClient client) : ISabaPlusClient
 
 			if (data.ErrorCode != 0)
 			{
-				SentrySdk.CaptureMessage(dataInString);
+				SentrySdk.CaptureException(new Exception(dataInString));
 			}
 
 			return data;
