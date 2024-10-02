@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
+using Newtonsoft.Json;
 using Tgs.GameInterface.SabaPlus.Core.Models;
 using Tgs.GameInterface.SabaPlus.Domains.FromProviders;
 
@@ -31,7 +31,7 @@ internal class SabaPlusClient(HttpClient client) : ISabaPlusClient
 			response.EnsureSuccessStatusCode();
 
 			var dataInString = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-			var data = JsonSerializer.Deserialize<SabaPlusResponse<TResponse>>(dataInString)!;
+			var data = JsonConvert.DeserializeObject<SabaPlusResponse<TResponse>>(dataInString);
 
 			if (data.ErrorCode != 0)
 			{
