@@ -8,7 +8,7 @@ public class BetResultCheckResult
 
 	public string GameRoundId { get; set; } = default!;
 
-	public string TransactionId { get; set; } = default!;
+	public string? TransactionId { get; set; } = default!;
 
 	public short Status { get; set; } = default!;
 
@@ -20,13 +20,13 @@ public class BetResultCheckResult
 
 	public decimal Payout { get; set; } = default!;
 
-	public string SettleDate { get; set; } = default!;
+	public string? SettleDate { get; set; } = default!;
 
-	public string TransDate { get; set; } = default!;
+	public string? TransDate { get; set; } = default!;
 
-	public string GameResult { get; set; } = default!;
+	public string? GameResult { get; set; } = default!;
 
-	public decimal Odds { get; set; } = default!;
+	public decimal? Odds { get; set; } = default!;
 
-	public Dictionary<string, string> OtherBetInfo { get; set; } = default!;
+	public Dictionary<string, string>? OtherBetInfo { get; set; } = default!;
 }
