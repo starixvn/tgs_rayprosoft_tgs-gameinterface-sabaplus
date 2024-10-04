@@ -4,6 +4,7 @@ using Tgs.GameInterface.SabaPlus.Core.IntegrationServices;
 using Tgs.GameInterface.SabaPlus.Core.Models;
 using NATS.Client.Core;
 using Tgs.MessageQueue.Nats.Serializers;
+using System.Net;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +30,20 @@ public static class ServiceCollectionExtensions
 			.AddSingleton(settings)
 			.RegisterAllServiceUtilityTypes(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient)
 			.AddHttpClient<ISabaPlusClient, SabaPlusClient>()
+			.ConfigurePrimaryHttpMessageHandler(() =>
+			{
+				if (settings.Proxy != null)
+				{
+					var proxy = new WebProxy(settings.Proxy);
+
+					return new HttpClientHandler
+					{
+						Proxy = proxy,
+					};
+				}
+
+				return new HttpClientHandler();
+			})
 			.Services
 			.AddNats(settings)
 			.AddScoped<IApiLogger, ApiLogger>();
